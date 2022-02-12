@@ -1,11 +1,10 @@
-const EC = require('elliptic').ec;
+const secp = require("ethereum-cryptography/secp256k1");
+const { toHex } = require("ethereum-cryptography/utils");
 
-const ec = new EC('secp256k1');
-
-const key = ec.genKeyPair();
+const privateKey = secp.utils.randomPrivateKey();
+const publicKey = secp.getPublicKey(privateKey);
 
 console.log({
-  privateKey: key.getPrivate().toString(16),
-  publicX: key.getPublic().x.toString(16),
-  publicY: key.getPublic().y.toString(16),
+    publicKey: toHex(publicKey),
+    privateKey: toHex(privateKey)
 });

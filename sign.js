@@ -1,24 +1,23 @@
-const EC = require('elliptic').ec;
-const SHA256 = require('crypto-js/sha256');
-
-const ec = new EC('secp256k1');
+const secp = require("ethereum-cryptography/secp256k1");
+const { sha256 } = require("ethereum-cryptography/sha256");
+const { utf8ToBytes, toHex } = require("ethereum-cryptography/utils");
 
 // TODO: fill in your hex private key
 const privateKey = "";
-
-const key = ec.keyFromPrivate(privateKey);
+const publicKey = secp.getPublicKey(privateKey);
 
 // TODO: change this message to whatever you would like to sign
 const message = "I am in the ChainShot Bootcamp";
+const messageHash = toHex(sha256(utf8ToBytes(message)));
 
-const msgHash = SHA256(message);
-
-const signature = key.sign(msgHash.toString());
+// TODO: try to create a signature with a recoverable public key
+const [signature, recoveryBit] = secp.signSync(messageHash, privateKey, { recovered: true });
+// const signature = secp.signSync(messageHash, privateKey);
+const isSigned = secp.verify(signature, messageHash, publicKey);
 
 console.log({
-  message,
-  signature: {
-    r: signature.r.toString(16),
-    s: signature.s.toString(16)
-  }
+    messageHash: messageHash,
+    signature: toHex(signature),
+    recoveryBit, // optional, remove if not initialized
+    isSigned
 });

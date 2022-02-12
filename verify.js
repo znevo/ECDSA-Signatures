@@ -1,24 +1,23 @@
-const EC = require('elliptic').ec;
-const SHA256 = require('crypto-js/sha256');
+const secp = require("ethereum-cryptography/secp256k1");
+const { sha256 } = require("ethereum-cryptography/sha256");
+const { utf8ToBytes, toHex, hexToBytes } = require("ethereum-cryptography/utils");
+const { recoverPublicKey } = require("@noble/secp256k1");
 
-const ec = new EC('secp256k1');
-
-// TODO: fill in the public key points
-const publicKey = {
-  x: "",
-  y: ""
-}
-
-const key = ec.keyFromPublic(publicKey, 'hex');
+// TODO: fill in the public key -OR- recover it from the signature below
+// const publicKey = hexToBytes("");
 
 // TODO: change this message to whatever was signed
 const msg = "I am in the ChainShot Bootcamp";
-const msgHash = SHA256(msg).toString();
+const msgHash = toHex(sha256(utf8ToBytes(msg)));
 
 // TODO: fill in the signature components
-const signature = {
-  r: "",
-  s: ""
-};
+const signature = "";
+const recoveryBit = 0;
 
-console.log(key.verify(msgHash, signature));
+// TODO: alternative try to recover the public key from the signature
+const publicKey = recoverPublicKey(msgHash, signature, recoveryBit);
+
+console.log({
+    publicKey: toHex(publicKey),
+    isVerified: secp.verify(signature, msgHash, publicKey),
+});
